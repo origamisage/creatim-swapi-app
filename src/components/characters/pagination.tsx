@@ -17,7 +17,7 @@ export function Pagination({
   hasPreviousPage,
 }: PaginationProps) {
   return (
-    <div className="mx-auto mt-8 flex w-fit items-center gap-4">
+    <div className="mt-8 flex items-center justify-center gap-4">
       <Button
         variant="ghost"
         size="sm"

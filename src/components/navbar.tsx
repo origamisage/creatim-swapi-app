@@ -6,11 +6,11 @@ import { MotionModal } from "./motion-component-wrappers";
 
 function Navbar() {
   return (
-    <header className="max-w-desktop border-stone sticky inset-x-0 top-0 z-50 mx-auto bg-black p-4">
+    <header className="max-w-desktop border-stone sticky inset-x-0 top-0 z-50 w-full bg-black p-4">
       <div className="backdrop" />
       <nav>
         {/* TABLET + DESKTOP LAYOUT */}
-        <ul className="relative mx-auto flex items-center justify-center gap-x-12 max-sm:hidden lg:gap-x-16 lg:text-[20px]">
+        <ul className="relative flex items-center justify-center gap-x-12 max-sm:hidden lg:gap-x-16 lg:text-[20px]">
           <NavItem href="#">Upcoming</NavItem>
           <NavItem href="#">Legacy</NavItem>
           <li className="w-28 shrink-0 md:w-40 lg:w-52">

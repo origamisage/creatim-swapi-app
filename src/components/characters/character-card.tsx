@@ -22,7 +22,7 @@ export function StarWarsCharacterCard({
         className={cn(
           "bg-card relative flex h-full w-full flex-col overflow-hidden rounded-xl border",
           "@max-[320px]:h-154 @max-[320px]:justify-end",
-          "[box-shadow:0px_2px_10px_rgba(227,214,29,0.2)]",
+          // "[box-shadow:0px_2px_10px_rgba(227,214,29,0.2)]",
         )}
       >
         {/* BACKGROUND IMAGE */}
@@ -115,9 +115,9 @@ const CharacterAttributes = ({
 // Helper function to get the image URL
 function getImageUrl(id: string | null) {
   if (!id) {
-    return "/src/assets/images/people/placeholder.webp";
+    return "/images/people/placeholder.webp";
   }
-  return `/src/assets/images/people/${id}.jpg`;
+  return `/images/people/${id}.jpg`;
 }
 
 // Helper function to extract the ID from the URL

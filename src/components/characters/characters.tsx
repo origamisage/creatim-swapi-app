@@ -42,7 +42,7 @@ function StarWarsCharacters() {
   if (error) {
     return (
       <section>
-        <div className="border-destructive bg-destructive/10 text-destructive col-span-full flex items-center gap-2 rounded-md border p-4">
+        <div className="border-destructive bg-destructive/10 text-destructive col-span-full mx-auto flex w-fit items-center gap-2 rounded-md border p-4">
           <AlertTriangle className="size-5" />
           <p>The Force is strong with this error. Please try again.</p>
         </div>
