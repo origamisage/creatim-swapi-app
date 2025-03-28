@@ -1,15 +1,10 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { AllPeople } from "../queries";
+import { AllPeople, HandleCharacterEdit } from "@/types/characters";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 // NOTE: This solution "works" but I would not use it to build a real app, I would rather reach for a battle-tested library like Tanstack Query to handle async state synchronization and caching
 // This soulution does not provide a way to refetch/revalidate data and is not scalable
+// In a real app, pagination should probably be handled via naviagation (/?page=3), making the URL the source of truth instead of an app state
 
 const editPersonSchema = z.object({
   name: z.string(),
@@ -22,44 +17,11 @@ const editPersonSchema = z.object({
   skin_color: z.string(),
 });
 
-type StarWarsContextType = {
-  data: AllPeople | null;
-  setData: React.Dispatch<React.SetStateAction<AllPeople | null>>;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  error: string | null;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-};
-
-const CharactersContext = createContext<StarWarsContextType | undefined>(
-  undefined,
-);
-
-export function StarWarsContextProvider({ children }: { children: ReactNode }) {
+export default function useCharacters() {
   const [data, setData] = useState<AllPeople | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  return (
-    <CharactersContext.Provider
-      value={{ data, setData, isLoading, setIsLoading, error, setError }}
-    >
-      {children}
-    </CharactersContext.Provider>
-  );
-}
-
-function useStarWarsContext() {
-  const context = useContext(CharactersContext);
-  if (context === undefined) {
-    throw new Error("useStarWarsContext must be used within a CountProvider");
-  }
-  return context;
-}
-
-export default function useStarWarsPeopleTest({ page }: { page: number }) {
-  const { data, setData, isLoading, setIsLoading, error, setError } =
-    useStarWarsContext();
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     // Ignore flag is necessary to prevent race conditions when url changes
@@ -109,9 +71,12 @@ export default function useStarWarsPeopleTest({ page }: { page: number }) {
     return () => {
       ignore = true;
     };
-  }, [page, setData, setError, setIsLoading]);
+  }, [page]);
 
-  const updateCharacter = (characterUrl: string, data: FormData) => {
+  const handleCharacterEdit: HandleCharacterEdit = (
+    characterUrl: string,
+    data: FormData,
+  ) => {
     // This is where we would make the API call to update the character
     // try {
     //     const res = await fetch(`https://swapi.dev/api/updatePerson`, {
@@ -181,5 +146,31 @@ export default function useStarWarsPeopleTest({ page }: { page: number }) {
     };
   };
 
-  return { data, isLoading, error, updateCharacter };
+  // Page management
+
+  const hasNextPage = !!data?.next;
+  const hasPreviousPage = !!data?.previous;
+
+  const handleIncrementPage = () => {
+    if (hasNextPage) {
+      setPage(page + 1);
+    }
+  };
+  const handleDecrementPage = () => {
+    if (hasPreviousPage) {
+      setPage(page - 1);
+    }
+  };
+
+  return {
+    data,
+    isLoading,
+    page,
+    handleIncrementPage,
+    handleDecrementPage,
+    hasNextPage,
+    hasPreviousPage,
+    error,
+    handleCharacterEdit,
+  };
 }

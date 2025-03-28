@@ -1,72 +1,32 @@
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/field";
+import { ListBox, ListBoxItem } from "@/components/ui/list-box";
+import { MyNumberField } from "@/components/ui/numberfield";
+import { Popover } from "@/components/ui/popover";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MyTextField } from "@/components/ui/textfield";
+import { Character, HandleCharacterEdit } from "@/types/characters";
 import { AlertTriangle } from "lucide-react";
 import { startTransition, useActionState } from "react";
-import { Form, Select } from "react-aria-components";
-import { MyTextField } from "../ui/textfield";
-import { MyNumberField } from "../ui/numberfield";
-import { Label } from "../ui/field";
-import { SelectTrigger, SelectValue } from "../ui/select";
-import { Popover } from "../ui/popover";
-import { ListBox, ListBoxItem } from "../ui/list-box";
-import { Button } from "../ui/button";
-import useStarWarsPeopleTest from "../../hooks/test-query";
-import { Person } from "../../queries";
+import { Form } from "react-aria-components";
 
-function EditForm({
-  character,
-  afterSave,
-  page,
-}: {
-  character: Person;
+type EditFormProps = {
+  character: Character;
+  onEdit: HandleCharacterEdit;
   afterSave: () => void;
-  page: number;
-}) {
-  // const queryClient = useQueryClient();
+};
 
-  const { updateCharacter } = useStarWarsPeopleTest({ page });
-
+function EditForm({ character, onEdit, afterSave }: EditFormProps) {
+  // We are using React's new useActionState hook to manage the form state and submit action
   async function editCharacterAction(_prevState: unknown, payload: FormData) {
     // Simulate a delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const { error, success } = updateCharacter(character.url, payload);
+    const { error, success } = onEdit(character.url, payload);
 
     if (!success) {
       return { error };
     }
-
-    // const formData = Object.fromEntries(payload);
-    // const { success, data, error } = editPersonSchema.safeParse(formData);
-
-    // if (!success) {
-    //   console.log(error);
-    //   // return null;
-    // }
-
-    // queryClient.setQueryData(
-    //   allPeopleOptions({ page: 1 }).queryKey,
-    //   (prevData) => {
-    //     // If the previous data is not available, we return it as is
-    //     if (!prevData) return prevData;
-
-    //     return {
-    //       ...prevData,
-    //       // We map over the previous data to update the edited date for the character
-    //       results: prevData.results.map((person) => {
-    //         if (person.url === character.url) {
-    //           const updatedCharacter = {
-    //             ...person,
-    //             ...data,
-    //             edited: new Date().toISOString(),
-    //           };
-
-    //           return updatedCharacter;
-    //         }
-    //         return person;
-    //       }),
-    //     };
-    //   },
-    // );
-
     afterSave();
   }
 
@@ -75,15 +35,17 @@ function EditForm({
     null,
   );
 
+  // I chose to use browser's native form validation, React Aria also provides as with the way of stylig error messages
+  // Form elements are uncontrolled and their values are later parsed from FormData using Zod
+  // If the form was more complex, I'd probably go for a more robust solution like React Hook Form or the new Tanstack Form library
+
   return (
     <Form
-      className=""
       onSubmit={(e) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
         startTransition(() => formAction(formData));
       }}
-      // action={formAction}
     >
       <div className="grid grid-cols-2 gap-x-2 gap-y-3">
         {/* ERROR */}

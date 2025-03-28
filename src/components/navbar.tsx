@@ -1,8 +1,8 @@
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { ReactNode, useState } from "react";
-import { Button, Dialog, Modal } from "react-aria-components";
-
+import { Button, Dialog } from "react-aria-components";
 import { twMerge as cn } from "tailwind-merge";
+import { MotionModal } from "./motion-component-wrappers";
 
 function Navbar() {
   return (
@@ -49,8 +49,6 @@ function NavItem({
     </li>
   );
 }
-
-const MotionModal = motion.create(Modal);
 
 function NavMenuModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -106,6 +104,8 @@ function NavMenuModal() {
 }
 
 export { Navbar };
+
+// These could probably be moved to a separate file
 
 function CloseIcon({ className }: { className?: string }) {
   return (

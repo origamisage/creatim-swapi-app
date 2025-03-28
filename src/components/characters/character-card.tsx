@@ -1,14 +1,15 @@
-import { Person } from "../../queries";
-import { EditModal } from "./edit-modal";
+import { Character, HandleCharacterEdit } from "@/types/characters";
+import { EditModal } from "./edit-form/edit-modal";
+import { twMerge as cn } from "tailwind-merge";
 
 type StarWarsCharacterCardProps = {
-  character: Person;
-  page: number;
+  character: Character;
+  onEdit: HandleCharacterEdit;
 };
 
 export function StarWarsCharacterCard({
   character,
-  page,
+  onEdit,
 }: StarWarsCharacterCardProps) {
   // Extract the ID from the URL
   const id = extractId(character.url);
@@ -18,10 +19,11 @@ export function StarWarsCharacterCard({
   return (
     <div className="@container h-full">
       <div
-        className={[
-          "bg-card relative flex h-full w-full flex-col overflow-hidden rounded-xl",
+        className={cn(
+          "bg-card relative flex h-full w-full flex-col overflow-hidden rounded-xl border",
           "@max-[320px]:h-154 @max-[320px]:justify-end",
-        ].join(" ")}
+          "[box-shadow:0px_2px_10px_rgba(227,214,29,0.2)]",
+        )}
       >
         {/* BACKGROUND IMAGE */}
         <div
@@ -33,19 +35,19 @@ export function StarWarsCharacterCard({
 
         {/* NAME */}
         <h2
-          className={[
+          className={cn(
             "bg-muted relative w-full px-4 py-3 text-2xl font-bold",
             "@max-[320px]:bg-transparent @max-[320px]:px-5 @max-[320px]:py-0 @max-[320px]:text-3xl",
-          ].join(" ")}
+          )}
         >
           {character.name}
         </h2>
 
         <div
-          className={[
+          className={cn(
             "relative grid grid-cols-2 gap-x-4 p-4",
             "@max-[320px]:grid-cols-1 @max-[320px]:gap-y-9 @max-[320px]:px-5 @max-[320px]:pb-11 @max-[320px]:text-lg",
-          ].join(" ")}
+          )}
         >
           <CharacterAttributes character={character} />
 
@@ -53,13 +55,13 @@ export function StarWarsCharacterCard({
             <img
               src={imageUrl}
               alt={character.name}
-              className={[
+              className={cn(
                 "mt-0.5 aspect-square rounded-lg object-cover object-top",
                 "@max-[320px]:hidden",
-              ].join(" ")}
+              )}
             />
 
-            <EditModal page={page} character={character} />
+            <EditModal onEdit={onEdit} character={character} />
           </div>
         </div>
       </div>
@@ -68,7 +70,7 @@ export function StarWarsCharacterCard({
 }
 
 type CharacterAttributesProps = Pick<
-  Person,
+  Character,
   | "height"
   | "mass"
   | "hair_color"

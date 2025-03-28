@@ -1,17 +1,21 @@
-import { useState } from "react";
-import useStarWarsPeopleTest from "../../hooks/test-query";
-import { StarWarsCharacterCard } from "./star-wars-character-card";
 import { Pagination } from "./pagination";
+import { StarWarsCharacterCard } from "./character-card";
+import { AlertTriangle } from "lucide-react";
+import useCharacters from "@/hooks/useCharacters";
+import { twMerge as cn } from "tailwind-merge";
 
 function StarWarsCharacters() {
-  // NOTE: In a real app, pagination should probably be handled via naviagation (/?page=3), making the URL the source of truth instead of an app state
-  // Since the API doesn't provide any POST endpoints, we prop drill the page number in order to know what cached value in localStorage to update
-  // Ideally, we would update the character and revalidate all the data upon succesful
-  const [page, setPage] = useState(1);
-
-  const { data, isLoading, error } = useStarWarsPeopleTest({
-    page: page,
-  });
+  const {
+    data,
+    isLoading,
+    error,
+    page,
+    handleDecrementPage,
+    handleIncrementPage,
+    hasNextPage,
+    hasPreviousPage,
+    handleCharacterEdit,
+  } = useCharacters();
 
   if (isLoading) {
     return (
@@ -23,10 +27,10 @@ function StarWarsCharacters() {
             .map((_, index) => (
               <li className="@container h-full" key={index}>
                 <div
-                  className={[
+                  className={cn(
                     "bg-muted h-[300px] animate-pulse rounded-xl",
                     "@max-[320px]:h-154",
-                  ].join(" ")}
+                  )}
                 ></div>
               </li>
             ))}
@@ -38,29 +42,33 @@ function StarWarsCharacters() {
   if (error) {
     return (
       <section>
-        <p>Ups, error..</p>
+        <div className="border-destructive bg-destructive/10 text-destructive col-span-full flex items-center gap-2 rounded-md border p-4">
+          <AlertTriangle className="size-5" />
+          <p>The Force is strong with this error. Please try again.</p>
+        </div>
       </section>
     );
   }
 
   const characters = data?.results;
 
-  const hasNextPage = !!data?.next;
-  const hasPreviousPage = !!data?.previous;
-
   return (
     <section>
       <ul className="mx-auto grid w-full max-w-4xl grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-x-6 gap-y-6">
         {characters?.map((character) => (
           <li key={character.url}>
-            <StarWarsCharacterCard character={character} page={page} />
+            <StarWarsCharacterCard
+              character={character}
+              onEdit={handleCharacterEdit}
+            />
           </li>
         ))}
       </ul>
 
       <Pagination
         page={page}
-        setPage={(page: number) => setPage(page)}
+        onNext={handleIncrementPage}
+        onPrevious={handleDecrementPage}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
       />

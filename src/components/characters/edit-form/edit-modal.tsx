@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Heading } from "react-aria-components";
-import { Person } from "../../queries";
-import { Button } from "../ui/button";
-import { ResponsiveModal } from "../ui/responsive-modal";
 import { EditForm } from "./edit-form";
+import { Character, HandleCharacterEdit } from "@/types/characters";
+import { ResponsiveModal } from "@/components/ui/responsive-modal";
+import { Button } from "@/components/ui/button";
 
 type EditModalProps = {
-  character: Person;
-  page: number;
+  character: Character;
+  onEdit: HandleCharacterEdit;
 };
 
-export function EditModal({ character, page }: EditModalProps) {
+export function EditModal({ character, onEdit }: EditModalProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +33,7 @@ export function EditModal({ character, page }: EditModalProps) {
         <div className="p-4.5">
           <EditForm
             character={character}
-            page={page}
+            onEdit={onEdit}
             afterSave={() => setOpen(false)}
           />
         </div>

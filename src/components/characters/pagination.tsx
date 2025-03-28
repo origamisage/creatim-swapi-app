@@ -1,31 +1,27 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 type PaginationProps = {
   page: number;
-  setPage: (page: number) => void;
+  onNext: () => void;
+  onPrevious: () => void;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 };
 
 export function Pagination({
   page,
-  setPage,
+  onNext,
+  onPrevious,
   hasNextPage,
   hasPreviousPage,
 }: PaginationProps) {
-  function incrementPage() {
-    setPage(page + 1);
-  }
-  function decrementPage() {
-    setPage(page - 1);
-  }
   return (
-    <div className="mx-auto mt-6 flex w-fit items-center gap-4">
+    <div className="mx-auto mt-8 flex w-fit items-center gap-4">
       <Button
         variant="ghost"
         size="sm"
-        onPress={decrementPage}
+        onPress={onPrevious}
         isDisabled={!hasPreviousPage}
         className="gap-1 pl-1.5"
       >
@@ -38,7 +34,7 @@ export function Pagination({
       <Button
         variant="ghost"
         size="sm"
-        onPress={incrementPage}
+        onPress={onNext}
         isDisabled={!hasNextPage}
         className="gap-1 pr-1.5"
       >
