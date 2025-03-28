@@ -1,40 +1,52 @@
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Button, Dialog, Modal } from "react-aria-components";
+
+import { twMerge as cn } from "tailwind-merge";
 
 function Navbar() {
   return (
-    <nav className="max-w-desktop border-stone sticky inset-x-0 top-0 z-50 mx-auto bg-black p-4">
+    <header className="max-w-desktop border-stone sticky inset-x-0 top-0 z-50 mx-auto bg-black p-4">
       <div className="backdrop" />
-      {/* TABLET + DESKTOP LAYOUT */}
-      <ul className="relative mx-auto flex items-center justify-center gap-x-12 text-lg font-bold max-sm:hidden lg:gap-x-16 lg:text-[20px]">
-        <li>
-          <a href="#">Upcoming</a>
-        </li>
-        <li>
-          <a href="#">Legacy</a>
-        </li>
-        <li className="w-28 shrink-0 md:w-40 lg:w-52">
-          <a href="#">
-            <Logo />
-          </a>
-        </li>
-        <li>
-          <a href="#">Merch</a>
-        </li>
-        <li>
-          <a href="#">About</a>
-        </li>
-      </ul>
+      <nav>
+        {/* TABLET + DESKTOP LAYOUT */}
+        <ul className="relative mx-auto flex items-center justify-center gap-x-12 max-sm:hidden lg:gap-x-16 lg:text-[20px]">
+          <NavItem href="#">Upcoming</NavItem>
+          <NavItem href="#">Legacy</NavItem>
+          <li className="w-28 shrink-0 md:w-40 lg:w-52">
+            <a href="/" aria-label="Home">
+              <Logo />
+            </a>
+          </li>
+          <NavItem href="#">Merch</NavItem>
+          <NavItem href="#">About</NavItem>
+        </ul>
 
-      {/* MOBILE LAYOUT */}
-      <div className="relative flex items-center justify-between sm:hidden">
-        <NavMenuModal />
-        <a href="/">
-          <LogoMobile className="text-swapi-400 w-50 overflow-visible" />
-        </a>
-      </div>
-    </nav>
+        {/* MOBILE LAYOUT */}
+        <div className="relative flex items-center justify-between sm:hidden">
+          <NavMenuModal />
+          <a href="/" aria-label="Home">
+            <LogoMobile className="text-swapi-400 w-50 overflow-visible" />
+          </a>
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function NavItem({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <li className={cn("text-lg font-bold", className)}>
+      <a href={href}>{children}</a>
+    </li>
   );
 }
 
@@ -46,7 +58,6 @@ function NavMenuModal() {
   return (
     <MotionConfig transition={{ type: "spring", bounce: 0, duration: 0.45 }}>
       <Button onPress={() => setIsOpen(!isOpen)} aria-label="Hamburger menu">
-        {/* AniamtePresence for avoiding initial animation */}
         <AnimatePresence initial={false}>
           {isOpen ? (
             <CloseIcon className="size-7" />
@@ -60,44 +71,31 @@ function NavMenuModal() {
         {isOpen && (
           <MotionModal
             initial={{ height: 0 }}
-            animate={{
-              height: "auto",
-            }}
-            exit={{
-              height: 0,
-              transition: { duration: 0.2 },
-            }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0, transition: { duration: 0.2 } }}
             isOpen
             onOpenChange={setIsOpen}
-            className={["fixed inset-0 top-15 overflow-hidden bg-black"].join(
-              " ",
-            )}
+            className="fixed inset-0 top-15 overflow-hidden bg-black"
           >
             <Dialog className="px-4 py-16 text-3xl">
               <motion.ul
-                initial={{
-                  opacity: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                }}
-                exit={{
-                  opacity: 0,
-                }}
-                className={["flex flex-col gap-4"].join(" ")}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col gap-4"
               >
-                <li className="font-bold">
-                  <a href="#">Upcoming</a>
-                </li>
-                <li className="font-bold">
-                  <a href="#">Legacy</a>
-                </li>
-                <li className="font-bold">
-                  <a href="#">Merch</a>
-                </li>
-                <li className="font-bold">
-                  <a href="#">About</a>
-                </li>
+                <NavItem href="#" className="text-3xl">
+                  Upcoming
+                </NavItem>
+                <NavItem href="#" className="text-3xl">
+                  Legacy
+                </NavItem>
+                <NavItem href="#" className="text-3xl">
+                  Merch
+                </NavItem>
+                <NavItem href="#" className="text-3xl">
+                  About
+                </NavItem>
               </motion.ul>
             </Dialog>
           </MotionModal>
